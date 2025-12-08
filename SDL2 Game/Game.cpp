@@ -1,16 +1,22 @@
 #include "Game.h"
 #include "TextureManager.h"
+#include "GameObject.h"
+#include "Map.h"
+#include "ECS.h"
+#include "Components.h"
 
-SDL_Texture* playerTex;
-SDL_Rect srcR, destR;
+GameObject* player;
+GameObject* enemy;
+Map* map;
 
-Game::Game() {
+SDL_Renderer* Game::renderer = nullptr;
 
-}
+Manager manager;
+auto& newPlayer(manager.addEntity());
 
-Game::~Game() {
+Game::Game() {}
 
-}
+Game::~Game() {}
 
 void Game::init(const char* title, int xpos, int ypos, int width, int height, bool fullscreen) {
 	int flags = 0;
@@ -34,7 +40,12 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 		isRunning = false;
 	}
 
-	playerTex = TextureManager::LoadTexture("images/hero.png", renderer);
+	player = new GameObject("images/hero.png", 0, 0);
+	enemy = new GameObject("images/evil.png", 50, 50);
+	map = new Map();
+
+	newPlayer.addComponent<PositionComponents>();
+	newPlayer.getComponent<PositionComponents>().setPos(500, 500);
 }
 
 void Game::handleEvents() {
@@ -53,20 +64,22 @@ void Game::handleEvents() {
 }
 
 void Game::update() {
-	cnt++;
-	destR.h = 64;
-	destR.w = 64;
-	destR.x = cnt;
+	player->Update();
+	enemy->Update();
+	manager.update();
+	std::cout << newPlayer.getComponent<PositionComponents>().x() << ", " <<
+		newPlayer.getComponent<PositionComponents>().y() << std::endl;
 }
 
 void Game::render() {
 	SDL_RenderClear(renderer);
-	SDL_RenderCopy(renderer, playerTex, NULL, &destR);
+	map->DrawMap();
+	player->Render();
+	enemy->Render();
 	SDL_RenderPresent(renderer);
 }
 
 void Game::clean() {
-	SDL_DestroyTexture(playerTex);
 	SDL_DestroyWindow(window);
 	SDL_DestroyRenderer(renderer);
 	IMG_Quit();
