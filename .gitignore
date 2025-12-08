@@ -1,0 +1,37 @@
+# Visual Studio
+.vs/
+*.vcxproj.user
+*.suo
+*.opensdf
+*.sdf
+*.db
+*.idb
+*.pdb
+*.obj
+*.ilk
+*.log
+*.tlog
+ipch/
+
+# Папки сборки
+x64/
+x86/
+Debug/
+Release/
+build/
+bin/
+obj/
+
+# Исполняемые файлы
+*.exe
+*.dll
+*.lib
+
+# SDL библиотеки (не добавлять в Git)
+SDL2-2.32.10/
+SDL2_image-2.8.8/
+SDL2_ttf-2.24.0/
+
+# Системные файлы
+.DS_Store
+Thumbs.db
