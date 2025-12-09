@@ -1,18 +1,18 @@
 #include "Game.h"
 #include "TextureManager.h"
-#include "GameObject.h"
 #include "Map.h"
-#include "ECS.h"
 #include "Components.h"
+#include "Vector2D.h"
+#include "Collision.h"
 
-GameObject* player;
-GameObject* enemy;
 Map* map;
 
 SDL_Renderer* Game::renderer = nullptr;
+SDL_Event Game::event;
 
 Manager manager;
-auto& newPlayer(manager.addEntity());
+auto& player(manager.addEntity());
+auto& wall(manager.addEntity());
 
 Game::Game() {}
 
@@ -26,9 +26,6 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	
 	if (SDL_Init(SDL_INIT_EVERYTHING) == 0) {
 		window = SDL_CreateWindow(title, xpos, ypos, width, height, flags);
-		if (window) {
-			std::cout << "Window created!" << std::endl;
-		}
 
 		renderer = SDL_CreateRenderer(window, -1, 0);
 		if (renderer) {
@@ -39,17 +36,21 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	else {
 		isRunning = false;
 	}
-
-	player = new GameObject("images/hero.png", 0, 0);
-	enemy = new GameObject("images/evil.png", 50, 50);
 	map = new Map();
 
-	newPlayer.addComponent<PositionComponents>();
-	newPlayer.getComponent<PositionComponents>().setPos(500, 500);
+	player.addComponent<TransformComponent>(2);
+	player.addComponent<SpriteComponent>("images/hero.png");
+	player.addComponent<KeyboardController>();
+	player.addComponent<ColliderComponent>("player");
+
+	wall.addComponent<TransformComponent>(300.0, 300.0, 300, 20, 1);
+	wall.addComponent<SpriteComponent>("images/dirt.png");
+	wall.addComponent<ColliderComponent>("wall");
 }
 
 void Game::handleEvents() {
-	SDL_Event event;
+
+
 	SDL_PollEvent(&event);
 
 	switch (event.type) {
@@ -64,18 +65,20 @@ void Game::handleEvents() {
 }
 
 void Game::update() {
-	player->Update();
-	enemy->Update();
+	manager.refresh();
 	manager.update();
-	std::cout << newPlayer.getComponent<PositionComponents>().x() << ", " <<
-		newPlayer.getComponent<PositionComponents>().y() << std::endl;
+
+	if (Collision::AABB(player.getComponent<ColliderComponent>().collider,
+		wall.getComponent<ColliderComponent>().collider)) {
+		player.getComponent<TransformComponent>().scale = 1;
+		std::cout << "Wall Hit!" << std::endl;
+	}
 }
 
 void Game::render() {
 	SDL_RenderClear(renderer);
 	map->DrawMap();
-	player->Render();
-	enemy->Render();
+	manager.draw();
 	SDL_RenderPresent(renderer);
 }
 
@@ -85,3 +88,4 @@ void Game::clean() {
 	IMG_Quit();
 	SDL_Quit();
 }
+

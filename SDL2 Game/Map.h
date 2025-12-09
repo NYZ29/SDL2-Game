@@ -17,3 +17,4 @@ public:
 	void LoadMap(int arr[20][25]);
 	void DrawMap();
 };
+

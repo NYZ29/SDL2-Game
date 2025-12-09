@@ -13,11 +13,12 @@ class Entity;
 using ComponentID = std::size_t;
 
 inline ComponentID getComponentID() {
-	static ComponentID lastID = 0;
+	static ComponentID lastID = 0u;
 	return lastID++;
 }
 
-template <typename T>  inline ComponentID getComponentTypeID() noexcept {
+template <typename T>  
+inline ComponentID getComponentTypeID() noexcept {
 	static ComponentID typeID = getComponentID();
 	return typeID;
 }
@@ -55,7 +56,8 @@ public:
 	bool isActive() const { return active; }
 	void destroy() { active = false; }
 
-	template <typename T> bool hasComponent() const {
+	template <typename T> 
+	bool hasComponent() const {
 		return componentBitSet[getComponentTypeID<T>()];
 	}
 
@@ -106,3 +108,4 @@ public:
 		return *e;
 	}
 };
+
