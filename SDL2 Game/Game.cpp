@@ -76,7 +76,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	enemy1.addComponent<ColliderComponent>("enemy");
 	enemy1.addComponent<EnemyAIComponent>(
 		&player.getComponent<TransformComponent>(),
-		EnemyBehavior::Chase, 1.5);
+		EnemyBehavior::Chase, 2);
 	enemy1.addGroup(groupEnemies);
 
 	enemy2.addComponent<TransformComponent>(1200, 300, 32, 32, 4);
@@ -179,6 +179,8 @@ void Game::update() {
 
 	if (camera.x < 0) camera.x = 0;
 	if (camera.y < 0) camera.y = 0;
+	if (camera.x + camera.w / 2 > ScreenWidth) camera.x = ScreenWidth - camera.w / 2;
+	if (camera.y + camera.h / 4 > ScreenHeight) camera.y = ScreenHeight - camera.h / 4;
 }
 
 void Game::render() {
