@@ -1,25 +1,27 @@
 #pragma once
 #include "ECS.h"
 #include "Vector2D.h"
+#include "Constants.h"
 
 class TransformComponent : public Component
 {
 public:
 	Vector2D position;
 	Vector2D velocity;
+	Vector2D lastPosition;
 
 	int height = 32;
 	int width = 32;
 	int scale = 1;
 
-	int speed = 3;
+	double speed = 3;
 
 	TransformComponent() {
 		position.Zero();
 	}
 	TransformComponent(int sc) {
 		position.x = 400;
-		position.y = 320;
+		position.y = 600;
 		scale = sc;
 	}
 	TransformComponent(double x, double y) {
@@ -36,9 +38,11 @@ public:
 
 	void init() override {
 		velocity.Zero();
+		lastPosition = position;
 	}
 
 	void update() override {
+		lastPosition = position;
 		position.x += velocity.x * speed;
 		position.y += velocity.y * speed;
 	}

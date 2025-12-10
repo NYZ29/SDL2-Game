@@ -1,10 +1,10 @@
 #include "Game.h"
 #include "TextureManager.h"
+#include "Constants.h"
 
 Game* game = nullptr;
 
 int main(int argc, char* argv[]) {
-	const int FPS = 60;
 	const int frameDelay = 1000 / FPS;
 
 	Uint32 frameStart;
@@ -12,7 +12,7 @@ int main(int argc, char* argv[]) {
 	
 	game = new Game();
 
-	game->init("SDL2_Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 640, false);
+	game->init("SDL2_Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, ScreenWidth, ScreenHeight, false);
 
 	while (game->running()) {
 		frameStart = SDL_GetTicks();
